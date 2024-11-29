@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "llm-ran"
+version = "0.1.0"
+description = ""
+authors = ["Chen Xinyang <me@chenxy.tech>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+langgraph = "^0.2.53"
+langchain = "^0.3.9"
+langchain-ollama = "^0.2.0"
+langsmith = "^0.1.147"
+jupyter = "^1.1.1"
+pydantic = "^2.10.2"
+pypdf = "^5.1.0"
+
+
+[tool.poetry.group.scraper.dependencies]
+requests = "^2.32.3"
+bbpb = "^1.4.1"
+beautifulsoup4 = "^4.12.3"
+wget = "^3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
