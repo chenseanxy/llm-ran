@@ -1,4 +1,5 @@
 import logging
+from logging import ERROR, WARNING, INFO, DEBUG
 
-def setup_logging():
-    logging.basicConfig(level=logging.INFO)
+def setup_logging(level=logging.INFO):
+    logging.basicConfig(level=level)
