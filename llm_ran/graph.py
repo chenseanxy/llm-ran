@@ -10,11 +10,14 @@ def run_graph(
         *,
         propagate_errors: bool = False
     ):
-    _logger.info("Query: %s", query)
+    _logger.info("Running graph with query: %s", query)
     try:
-        res = graph.invoke({"messages": [("human", query)]})
+        res = graph.invoke(
+            {"messages": [("human", query)]},
+        )
+        _logger.info("Graph finished executing with %d messages", len(res["messages"]))
         return res["messages"][-1].content
-    except Exception as e:
+    except Exception:
+        _logger.info("Graph failed to execute", exc_info=True)
         if propagate_errors:
             raise
-        _logger.exception(e)

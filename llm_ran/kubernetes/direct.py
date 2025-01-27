@@ -55,8 +55,9 @@ if __name__ == "__main__":
     from llm_ran.test.utils import setup_harness, test_graph
     from llm_ran.llm import models
     _TEST_QUERIES = [
-        "In namespace 'monitoring', list all the pods that are running on same kubernetes node "
-        "as pod 'prometheus-monitoring-kube-prometheus-prometheus-0' (including this one). Return as a list.",
+        "List all the non-existing nodes.",
+        # "In namespace 'monitoring', list all the pods that are running on same kubernetes node "
+        # "as pod 'prometheus-monitoring-kube-prometheus-prometheus-0' (including this one). Return as a list.",
     ]
     model = setup_harness(models.QWEN_25_14B)
     chain = kubernetes_direct_chain(model)

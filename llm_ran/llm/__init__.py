@@ -18,7 +18,7 @@ def get_model(model: str) -> BaseChatModel:
     else:
         return ChatOllama(
             model=model, base_url="http://localhost:11434",
-            timeout=10.0,
+            timeout=60.0,
         )
 
 

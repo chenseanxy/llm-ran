@@ -116,21 +116,21 @@ if __name__ == "__main__":
         # "What are the names and ports of the services in the 'monitoring' namespace? "
         # "Return name as keys and ports in a list as values",
         # "List all the pod names in the 'monitoring' namespace. Return as a list of pod names.",
-        # "List all the nodes.",
+        "List all the non-existing nodes.",
         # "Show all the pods in the 'monitoring' namespace that are running on node 'k3d-oran-agent-1'.",
         # '''
         # Given a pod name 'prometheus-monitoring-kube-prometheus-prometheus-0'
         # in the 'monitoring' namespace, get the pod's node name.
         # ''',
         # Cutoff: anything below this ended up being too complicated for one code gen, results are less consistent
-        '''
-        In namespace 'monitoring', list all the pods that are running on same kubernetes node
-        as pod 'prometheus-monitoring-kube-prometheus-prometheus-0' (including this one). Return as a list.
-        ''',
+        # '''
+        # In namespace 'monitoring', list all the pods that are running on same kubernetes node
+        # as pod 'prometheus-monitoring-kube-prometheus-prometheus-0' (including this one). Return as a list.
+        # ''',
         # '''
         # In namespace 'monitoring', find out the node where pod 'prometheus-monitoring-kube-prometheus-prometheus-0' 
         # is deployed on, then use that find all the pods that are running on the same node. Return the names of the pods.
         # '''
     ]
-    model = setup_harness(models.QWEN_25_14B)
+    model = setup_harness(models.LLAMA_31_8B)
     test_graph(kubernetes_codegen_chain(model), _TEST_QUERIES)

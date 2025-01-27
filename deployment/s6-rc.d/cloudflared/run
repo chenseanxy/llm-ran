@@ -1,0 +1,3 @@
+#!/command/with-contenv bash
+
+cloudflared access tcp --hostname test-k8s-dummy.chenxy.tech --url 127.0.0.1:1234
