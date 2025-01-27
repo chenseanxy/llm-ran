@@ -5,6 +5,7 @@ Dockerfile
 .dockerignore
 data/
 logs/
+.git/
 
 # Generic Python rules
 # Byte-compiled / optimized / DLL files
