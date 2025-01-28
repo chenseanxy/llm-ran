@@ -16,11 +16,12 @@ logger = logging.getLogger("experiment")
 REPEATS = 20
 models_ = [
     # models.LLAMA_31_8B,
-    models.QWEN_25_7B,
-    models.QWEN_25_14B,
+    # models.QWEN_25_7B,
+    # models.QWEN_25_14B,
     # models.CLAUDE_BIG,
     # models.QWEN_25_32B,
     # models.LLAMA_33_70B,
+    models.QWEN_25_72B,
 ]
 data = []
 
