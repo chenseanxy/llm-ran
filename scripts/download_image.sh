@@ -1,14 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=download_image       # Job name
 #SBATCH --account=project_2012346       # Billing project, has to be defined!
-#SBATCH --time=02:00:00             # Max. duration of the job
+#SBATCH --time=00:10:00             # Max. duration of the job
 #SBATCH --cpus-per-task=8
-#SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --mem-per-cpu=1G            # Memory to reserve per core
 #SBATCH --partition=small           # Job queue (partition)
-#SBATCH --gres=nvme:128
-##SBATCH --mail-type=BEGIN          # Uncomment to enable mail
+#SBATCH --gres=nvme:50
+#SBATCH --mail-type=END,FAIL
 
 # sinteractive --account project_2012346 --time 1:00:00 -m 16G --tmp 128 --cores 8
 

@@ -6,6 +6,7 @@ Dockerfile
 data/
 logs/
 .git/
+.out
 
 # Generic Python rules
 # Byte-compiled / optimized / DLL files
