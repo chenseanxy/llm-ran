@@ -1,4 +1,7 @@
 
+# Ensure SSL_CERT_DIR follows ubuntu image
+export SSL_CERT_DIR=/etc/ssl/certs
+
 HOME=/root ollama serve >> /app/logs/ollama.log 2>&1 &
 PID1=$!
 
