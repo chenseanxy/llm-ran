@@ -1,7 +1,11 @@
 # syntax=docker/dockerfile:1.7-labs
 
-ARG OLLAMA_VERSION=0.5.7
-FROM ollama/ollama:${OLLAMA_VERSION}
+# vLLM: https://github.com/vllm-project/vllm/blob/main/Dockerfile
+# image with vLLM installed
+# TODO: Restore to base image after FlashInfer AOT wheel fixed
+ARG CUDA_VERSION=12.4.1
+
+FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.12
 

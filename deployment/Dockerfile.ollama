@@ -1,19 +1,11 @@
 # syntax=docker/dockerfile:1.7-labs
 
-# vLLM: https://github.com/vllm-project/vllm/blob/main/Dockerfile
-# image with vLLM installed
-# TODO: Restore to base image after FlashInfer AOT wheel fixed
-ARG CUDA_VERSION=12.4.1
-
-FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04
+ARG OLLAMA_VERSION=0.5.7
+FROM ollama/ollama:${OLLAMA_VERSION}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.12
 
-RUN PYTHON_VERSION_STR=$(echo ${PYTHON_VERSION} | sed 's/\.//g') && \
-    echo "export PYTHON_VERSION_STR=${PYTHON_VERSION_STR}" >> /etc/environment
-
 # Install Python and other dependencies
-#wget sudo vim
 RUN echo 'tzdata tzdata/Areas select Europe' | debconf-set-selections \
     && echo 'tzdata tzdata/Zones/Europe select Helsinki' | debconf-set-selections \
     && apt-get update -y \
@@ -34,7 +26,6 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLA
 RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
 RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
-
 COPY deployment/s6-rc.d/ /etc/s6-overlay/s6-rc.d
 
 # Setup Cloudflared
@@ -53,6 +44,11 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry install --no-root
 
 COPY . /app/
+
+RUN poetry install
+
 CMD ["poetry", "run", "python", "-m", "llm_ran"]
 
 ENTRYPOINT ["/init"]
+
+ENV HOME=/root

@@ -15,6 +15,12 @@ def get_model(model: str) -> BaseChatModel:
             api_key="api-key",
             model=model.removeprefix("lmstudio:"),
         )
+    elif model.startswith("vllm:"):
+        return ChatOpenAI(
+            base_url="http://localhost:1234/v1",
+            api_key="api-key",
+            model=model.removeprefix("vllm:"),
+        )
     else:
         return ChatOllama(
             model=model, base_url="http://localhost:11434",
