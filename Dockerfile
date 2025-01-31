@@ -28,10 +28,10 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLA
 RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
 COPY deployment/s6-rc.d/ /etc/s6-overlay/s6-rc.d
 
-# Setup Cloudflared
+# Setup Cloudflared for API networking
 ADD --chmod=755 https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 /usr/local/bin/cloudflared
 
-# Setup Poetry
+# Setup Poetry for Python dependencies
 ARG POETRY_VERSION=2.0
 
 # See https://python-poetry.org/docs/#ci-recommendations
@@ -39,16 +39,19 @@ RUN --mount=type=cache,target=/root/.cache/pip pip install "poetry==${POETRY_VER
 
 WORKDIR /app
 
+# For build caching
 COPY pyproject.toml poetry.lock /app/
 
 RUN poetry install --no-root
 
 COPY . /app/
 
+# To make sure llm-ran is installed as a package
 RUN poetry install
 
 CMD ["poetry", "run", "python", "-m", "llm_ran"]
 
+# S6 entrypoint
 ENTRYPOINT ["/init"]
 
 ENV HOME=/root

@@ -16,10 +16,13 @@ def get_model(model: str) -> BaseChatModel:
             model=model.removeprefix("lmstudio:"),
         )
     else:
-        return ChatOllama(
+        _mdl = ChatOllama(
             model=model, base_url="http://localhost:11434",
             timeout=60.0,
         )
+        # warm up model
+        _mdl.invoke([])
+        return _mdl
 
 
 def unload_model(model: BaseChatModel):

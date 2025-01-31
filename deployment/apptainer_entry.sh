@@ -2,6 +2,7 @@
 # Ensure SSL_CERT_DIR follows ubuntu image
 export SSL_CERT_DIR=/etc/ssl/certs
 
+# /app will be mounted from /projappl/project_2012346/llm-ran
 HOME=/root ollama serve >> /app/logs/ollama.log 2>&1 &
 PID1=$!
 

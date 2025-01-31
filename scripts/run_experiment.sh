@@ -17,4 +17,6 @@ apptainer exec --nv \
     /app/deployment/apptainer_entry.sh \
     python /app/experiments/k8s.py
 
+# -B /users/chenxiya:/users/chenxiya : for kubeconfig
+
 # apptainer shell /projappl/project_2012346/llm-ran.sif
