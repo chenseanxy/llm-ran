@@ -5,9 +5,9 @@ import logging
 from llm_ran.llm import get_model, unload_model, models
 from llm_ran.test.utils import semantic_equal
 from llm_ran.graph import run_graph
-from llm_ran.kubernetes.direct import kubernetes_direct_chain
-from llm_ran.kubernetes.codegen import kubernetes_codegen_chain
-from llm_ran.kubernetes.test import QUERIES_ANSWERS
+from llm_ran.k8s.direct import kubernetes_direct_chain
+from llm_ran.k8s.codegen import kubernetes_codegen_chain
+from llm_ran.k8s.test import QUERIES_ANSWERS
 from llm_ran.logging import setup_logging
 
 setup_logging(to_file=True)

@@ -6,7 +6,7 @@ authors = ["Chen Xinyang <me@chenxy.tech>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.12"
 langgraph = "^0.2.53"
 langchain = "^0.3.9"
 langchain-ollama = "^0.2.0"
@@ -23,12 +23,20 @@ langchain-openai = "^0.3.2"
 langchain-experimental = "^0.3.4"
 tqdm = "^4.67.1"
 
+[tool.poetry.group.scraper]
+optional = true
 
 [tool.poetry.group.scraper.dependencies]
 requests = "^2.32.3"
 bbpb = "^1.4.1"
 beautifulsoup4 = "^4.12.3"
 wget = "^3.2"
+
+[tool.poetry.group.serving]
+optional = true
+
+[tool.poetry.group.serving.dependencies]
+streamlit = "^1.43.2"
 
 [build-system]
 requires = ["poetry-core"]
