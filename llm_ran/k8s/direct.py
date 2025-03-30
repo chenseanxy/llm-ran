@@ -6,11 +6,11 @@ from . import direct_impl
 
 
 K8S_DIRECT_TOOLS = [
-    # tool(direct_impl.get_pod_names_in_namespace),
-    # tool(direct_impl.get_services_in_namespace),
-    # tool(direct_impl.get_nodes),
-    # tool(direct_impl.get_pods_on_node_in_namespace),
-    # tool(direct_impl.get_pod_node),
+    tool(direct_impl.get_pod_names_in_namespace),
+    tool(direct_impl.get_services_in_namespace),
+    tool(direct_impl.get_nodes),
+    tool(direct_impl.get_pods_on_node_in_namespace),
+    tool(direct_impl.get_pod_node),
     tool(direct_impl.get_deployment_status),
     tool(direct_impl.get_pod_status),
     tool(direct_impl.get_deployment_pods),

@@ -7,7 +7,7 @@ from llm_ran.test.utils import semantic_equal
 from llm_ran.graph import run_graph
 from llm_ran.k8s.direct import kubernetes_direct_chain
 from llm_ran.k8s.codegen import kubernetes_codegen_chain
-from llm_ran.k8s.test_straight_qa import QUERIES_ANSWERS
+from llm_ran.benchmark.test_straight_qa import QUERIES_ANSWERS
 from llm_ran.logging import setup_logging
 
 setup_logging(to_file=True)
@@ -42,7 +42,8 @@ for model_name in models_:
                 # print(f"Running model {model} repeat {i}")
                 try:
                     res = run_graph(graph, query, propagate_errors=True)
-                    loaded = json.loads(res)
+                    msg = res["messages"][-1].content
+                    loaded = json.loads(msg)
                     this = {
                         "graph": graph_name,
                         "model": model_name,

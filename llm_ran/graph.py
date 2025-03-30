@@ -16,7 +16,8 @@ def run_graph(
             {"messages": [("human", query)]},
         )
         _logger.info("Graph finished executing with %d messages", len(res["messages"]))
-        return res["messages"][-1].content
+        return res
+        # return res["messages"][-1].content
     except Exception:
         _logger.info("Graph failed to execute", exc_info=True)
         if propagate_errors:

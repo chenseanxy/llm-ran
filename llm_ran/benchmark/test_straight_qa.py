@@ -1,6 +1,6 @@
 from typing import Callable
 
-from .direct_impl import (
+from ..k8s.direct_impl import (
     get_services_in_namespace,
     get_pod_names_in_namespace,
     get_nodes,

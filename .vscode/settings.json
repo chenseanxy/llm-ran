@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/kustomization.json": "/llm_ran/k8s_env/manifests/scenarios/**/*.yaml",
+    }
+}
