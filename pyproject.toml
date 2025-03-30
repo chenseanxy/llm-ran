@@ -22,6 +22,7 @@ langchain-anthropic = "^0.3.4"
 langchain-openai = "^0.3.2"
 langchain-experimental = "^0.3.4"
 tqdm = "^4.67.1"
+bert-score = "^0.3.13"
 
 [tool.poetry.group.scraper]
 optional = true

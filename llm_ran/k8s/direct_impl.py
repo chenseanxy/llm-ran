@@ -29,3 +29,21 @@ def get_pod_node(pod_name: str, namespace: str) -> str:
     """Get the node name for the given pod in the given namespace"""
     pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
     return pod.spec.node_name
+
+def get_deployment_status(deployment_name: str, namespace: str) -> str:
+    """Get the status of the given deployment in the given namespace"""
+    deployment = client.AppsV1Api().read_namespaced_deployment(deployment_name, namespace)
+    return deployment.status
+
+def get_deployment_pods(deployment_name: str, namespace: str) -> list[str]:
+    """Get the names of the pods for the given deployment in the given namespace"""
+    deployment = client.AppsV1Api().read_namespaced_deployment(deployment_name, namespace)
+    deployment_selector = deployment.spec.selector.match_labels
+    label_selector = ",".join([f"{k}={v}" for k, v in deployment_selector.items()])
+    pods = client.CoreV1Api().list_namespaced_pod(namespace, label_selector=label_selector)
+    return [pod for pod in pods.items]
+
+def get_pod_status(pod_name: str, namespace: str) -> str:
+    """Get the status of the given pod in the given namespace"""
+    pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
+    return pod.status

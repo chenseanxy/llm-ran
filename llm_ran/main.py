@@ -5,10 +5,10 @@ setup_logging()
 # print(get_nodes())
 
 from llm_ran.llm import get_model, models
-from llm_ran.k8s.codegen import kubernetes_codegen_chain
-from llm_ran.frontend.stream_lit import main
+# from llm_ran.k8s.codegen import kubernetes_codegen_chain as chain
+from llm_ran.k8s.direct import kubernetes_direct_chain as chain
+from llm_ran.frontend import stream_lit
 
 model = get_model(models.QWEN_25_14B)
-chain = kubernetes_codegen_chain(model)
-main(chain)
+stream_lit.main(chain(model))
 # poetry run python -m streamlit run llm_ran/main.py

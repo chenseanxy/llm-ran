@@ -49,25 +49,29 @@ class K8sCodeGenToolNode(ToolNode):
         return super()._run_one(call, config)
 
 K8S_CODE_GEN_SYS_PROMPT = '''
-You are a Kubernetes expert developing K8s Python client code.
+You are a Kubernetes expert answering questions about a K8S cluster.
+
+To answer the question, you'll need to write K8S Python client code
+to query the cluster.
 Do NOT import anything, 'client' object is already given to you, 
 use it DIRECTLY to query the Kubernetes cluster.
 Do NOT use try-catch clauses and do NOT handle exceptions.
-
-Here are some pointers for solving questions:
-1. Find out which entities the question is asking for (e.g., pods, services, deployments, etc.)
-   If provided with a name, use the name to query the specific entity.
-2. Use the V1 Apis provided by the 'client' object to query the entities.
-3. Extract the relevant fields the question is asking for, and ONLY extract the fields
-   that are explicitly asked for. If the question only ask for the entities, 
-   return the names of the entities. Do NOT store the entire entity.
-4. Save the results into the 'result' dictionary. Do NOT print them.
-
+Query the cluster and save the results in the 'result' dictionary.
 Execute the code with the tool we have provided.
-After you have executed the code, ONLY return the results as pure plaintext JSON.
+If needed, you can write and execute code multiple times to gather
+more information.
+Then answer the original question based on all the information you 
+have gathered. 
+
 You are to answer the following question with code:
 '''
-
+'''
+Here are some pointers for solving questions:
+1. Think about the steps you need to take to answer the question.
+2. Find out which entities you should query (e.g., pods, services, deployments, etc.)
+3. Use the V1 Apis provided by the 'client' object to query the entities.
+4. Save the results into the 'result' dictionary. Do NOT print them.
+'''
 K8S_CODE_GEN_ERR_EXEC_PROMPT = '''
 The code you last submitted failed to run. Try to fix the errors.
 Do not repeat mistakes.
@@ -96,8 +100,8 @@ def kubernetes_codegen_chain(
     
     def on_tool_error(exception: Exception):
         if isinstance(exception, K8sCodeGenExecutionError):
-            return K8S_CODE_GEN_ERR_EXEC_PROMPT.format(error=repr(exception.exception))
-        return GENERIC_TOOL_CALL_ERROR_TEMPLATE.format(error=repr(exception))
+            return K8S_CODE_GEN_ERR_EXEC_PROMPT.format(error=exception.exception)
+        return GENERIC_TOOL_CALL_ERROR_TEMPLATE.format(error=exception)
 
     graph = StateGraph(_State)
     graph.add_node("call_llm", call_llm)
@@ -117,7 +121,7 @@ if __name__ == "__main__":
         # "What are the names and ports of the services in the 'monitoring' namespace? "
         # "Return name as keys and ports in a list as values",
         # "List all the pod names in the 'monitoring' namespace. Return as a list of pod names.",
-        "List all the non-existing nodes.",
+        # "List all the non-existing nodes.",
         # "Show all the pods in the 'monitoring' namespace that are running on node 'k3d-oran-agent-1'.",
         # '''
         # Given a pod name 'prometheus-monitoring-kube-prometheus-prometheus-0'
@@ -132,6 +136,7 @@ if __name__ == "__main__":
         # In namespace 'monitoring', find out the node where pod 'prometheus-monitoring-kube-prometheus-prometheus-0' 
         # is deployed on, then use that find all the pods that are running on the same node. Return the names of the pods.
         # '''
+        "Why is my deployment `productcatalogservice` failing?"
     ]
-    model = setup_harness(models.LLAMA_31_8B)
+    model = setup_harness(models.QWEN_25_14B)
     test_graph(kubernetes_codegen_chain(model), _TEST_QUERIES)
