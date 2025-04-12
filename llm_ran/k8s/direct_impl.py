@@ -12,6 +12,10 @@ def get_services_in_namespace(namespace: str) -> dict[str, list[int]]:
     services = client.CoreV1Api().list_namespaced_service(namespace)
     return {service.metadata.name: [port.port for port in service.spec.ports] for service in services.items}
 
+def get_deployments_in_namespace(namespace: str) -> dict[str, list[int]]:
+    """Get the names of the deployments in the given namespace"""
+    deployments = client.AppsV1Api().list_namespaced_deployment(namespace)
+    return [deployment.metadata.name for deployment in deployments.items]
 
 def get_nodes() -> list[str]:
     """Get all the node names in the cluster"""
@@ -41,9 +45,24 @@ def get_deployment_pods(deployment_name: str, namespace: str) -> list[str]:
     deployment_selector = deployment.spec.selector.match_labels
     label_selector = ",".join([f"{k}={v}" for k, v in deployment_selector.items()])
     pods = client.CoreV1Api().list_namespaced_pod(namespace, label_selector=label_selector)
-    return [pod for pod in pods.items]
+    return [pod.metadata.name for pod in pods.items]
 
-def get_pod_status(pod_name: str, namespace: str) -> str:
-    """Get the status of the given pod in the given namespace"""
+def get_service_deployment(service_name: str, namespace: str) -> str:
+    """Get the deployment name for the given service in the given namespace"""
+    service = client.CoreV1Api().read_namespaced_service(service_name, namespace)
+    return service.spec.selector["app"] if "app" in service.spec.selector else None
+
+def get_pod_details(pod_name: str, namespace: str) -> dict[str, str]:
+    """Get the details of the given pod in the given namespace"""
     pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
-    return pod.status
+    return pod
+
+def get_deployment_replicas(deployment_name: str, namespace: str) -> int:
+    """Get the number of replicas for the given deployment in the given namespace"""
+    deployment = client.AppsV1Api().read_namespaced_deployment(deployment_name, namespace)
+    return deployment.spec.replicas if deployment.spec.replicas else None
+
+def get_deployment_per_pod_resource_requests(deployment_name: str, namespace: str) -> dict[str, dict[str, str]]:
+    """Get the per-pod resource requests for the given deployment in the given namespace"""
+    deployment = client.AppsV1Api().read_namespaced_deployment(deployment_name, namespace)
+    return deployment.spec.template.spec.containers[0].resources.requests if deployment.spec.template.spec.containers else None

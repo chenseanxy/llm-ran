@@ -12,6 +12,7 @@ class Question(BaseModel):
     id: str
     question: str
     answer: Callable[[], str | int | float]
+    output_unit: str | None = None  # e.g. "cpu_mi", "mem_mi"
     wrong_answers: list[str] = []
     derive_wrong_answers: Callable[[str | int | float], list[str]] | None = None
 
@@ -64,7 +65,7 @@ class Question(BaseModel):
         if evaluate_as not in self.can_evaluate_as():
             raise CannotEvaluateAsError(q, t, evaluate_as)
         if evaluate_as == 0:
-            return f"{q}\nAnswer with a single number"
+            return f"{q}\nAnswer ONLY with a single number."
         if evaluate_as == 1:
             right_answer = self.get_answer()
             if self.derive_wrong_answers is not None:
@@ -82,9 +83,9 @@ class Question(BaseModel):
             self.multiple_choice_generated_answers = answers
 
             answers_template = "\n".join(f"{k}: {v}" for k, v in answers)
-            return f"Choose the correct answer for this question: {q}\n{answers_template}\nAnswer with a single letter"
+            return f"Choose the correct answer for this question: {q}\n{answers_template}\nAnswer ONLY with a single letter."
         if evaluate_as == 2:
-            return f"{q}\nAnswer with a few words or a single sentence."
+            return f"{q}\nAnswer with a few words."
 
     def dump(self) -> dict:
         return {
@@ -96,6 +97,7 @@ class Question(BaseModel):
             "multiple_choice_generated_answers": self.multiple_choice_generated_answers,
             "level": self.level,
             "base_type": self.base_type,
+            "output_unit": self.output_unit,
         }
 
 

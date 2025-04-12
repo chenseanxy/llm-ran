@@ -4,9 +4,12 @@ from langchain_openai import ChatOpenAI
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from typing import Literal
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
-def get_model(model: str) -> BaseChatModel:
+def get_model(model: str, *, pull=False) -> BaseChatModel:
     if model.startswith("claude"):
         return ChatAnthropic(model=model)
     elif model.startswith("lmstudio:"):
@@ -19,8 +22,13 @@ def get_model(model: str) -> BaseChatModel:
         _mdl = ChatOllama(
             model=model, base_url="http://localhost:11434",
             timeout=60.0,
+            num_ctx=32768,  # 32k context for qwen
         )
-        # warm up model
+        if pull:
+            _logger.info(f"Pulling model {model}...")
+            _mdl._client.pull(model)
+
+        _logger.info(f"Warming up model {model}...")
         _mdl.invoke([])
         return _mdl
 

@@ -5,15 +5,14 @@ from langgraph.prebuilt import create_react_agent
 from . import direct_impl
 
 
+for name, func in direct_impl.__dict__.items():
+    if callable(func) and name.startswith("get_"):
+        globals()[name] = tool(func)
+
 K8S_DIRECT_TOOLS = [
-    tool(direct_impl.get_pod_names_in_namespace),
-    tool(direct_impl.get_services_in_namespace),
-    tool(direct_impl.get_nodes),
-    tool(direct_impl.get_pods_on_node_in_namespace),
-    tool(direct_impl.get_pod_node),
-    tool(direct_impl.get_deployment_status),
-    tool(direct_impl.get_pod_status),
-    tool(direct_impl.get_deployment_pods),
+    tool(func)
+    for name, func in direct_impl.__dict__.items()
+    if callable(func) and name.startswith("get_")
 ]
 
 K8S_DIRECT_SYS_PROMPT = '''

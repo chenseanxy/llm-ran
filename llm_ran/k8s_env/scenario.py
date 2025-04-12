@@ -14,15 +14,20 @@ class ScenarioError(RuntimeError):
 
 
 class Scenario():
-    def __init__(self, scenario: str | None):
+    def __init__(self, scenario: str | None, *, load=True):
         self.scenario = scenario
+        self.load = load
     
     def __enter__(self):
         """Enter the scenario context."""
+        if not self.load:
+            return None
         return self.load_scenario(self.scenario)
     
     def __exit__(self, exc_type, exc_value, traceback):
         """Exit the scenario context."""
+        if not self.load:
+            return None
         return self.load_scenario(None)
 
     def _generate_kustomize(self, scenario: str | None = None):
