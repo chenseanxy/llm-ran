@@ -80,9 +80,17 @@ def run_one_trial(
     result, error = run_graph(graph, question, propagate_errors=False)
     execution_time = time() - _time_before
 
-    _logger.info("Result: %s", result["messages"][-1].content)
+    if not result or not result["messages"]:
+        text_result = None
+    elif result["messages"][-1].type != "ai":
+        text_result = None
+    else:
+        text_result = result["messages"][-1].content
+
+    _logger.info("Result: %s", text_result)
     identifier = f"{run_id}_{identifier_prefix}_{q.get_type(evaluate_as)}_{trial_id}"
-    with open(f"{this_path}/{identifier}.yaml", "w") as f:
+    snapshot_path = f"{this_path}/{identifier}.yaml"
+    with open(snapshot_path, "w") as f:
         yaml.dump({"question": q.dump(), "result": result, "error": error}, f)
 
     expected = q.get_answer()
@@ -101,7 +109,7 @@ def run_one_trial(
         "execution_time": execution_time,
         **_sum_message_costs(result["messages"]),
         **context,
-        "result": result["messages"][-1].content,
+        "result": text_result,
         "error": error.__class__.__name__ if error else None,
     }
     (result_logger or _logger).info(this_result)
@@ -185,8 +193,9 @@ def run_test_cases(
                         expected_time = elapsed_time / (qi) * len(test_case.questions) if qi > 0 else 0
                         remaining_time = expected_time - elapsed_time
                         progress_logger.info(
-                            "Scenario %s Progress: %d/%d, elapsed: %.2fs, total: %.2fs, remaining: %.2fs",
+                            "Scenario %s ctx=%s Progress: %d/%d, elapsed: %.2fs, total: %.2fs, remaining: %.2fs",
                             scenario_text,
+                            context,
                             qi + 1,
                             len(test_case.questions),
                             elapsed_time,

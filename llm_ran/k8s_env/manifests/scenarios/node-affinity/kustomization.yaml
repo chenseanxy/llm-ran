@@ -9,8 +9,5 @@ patches:
     spec:
       template:
         spec:
-          containers:
-            - name: server
-              livenessProbe:
-                grpc:
-                  port: 3551
+          nodeSelector:
+            disktype: ssd

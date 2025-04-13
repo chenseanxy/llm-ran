@@ -31,14 +31,13 @@ class K8sCodeGenExecutor(BaseTool):
         code = sanitize_input(code)
         _logger.info(f"Executing code: \n{'-'*20}\n{code}\n{'-'*20}")
         globals_ = {"client": client, "result": {}}
-        locals_ = {}
         try:
-            exec(code, globals_, locals_)   # noqa TODO: ACE
-            assert globals_["result"] or locals_.get("result", {}), "result is empty"
+            exec(code, globals_)   # noqa TODO: ACE
+            assert globals_["result"], "result is empty"
         except Exception as e:
             _logger.info(f"Error executing code, exception: {e}", exc_info=True)
             raise K8sCodeGenExecutionError(code, exception=e)
-        return globals_["result"] or locals_.get("result", {})
+        return globals_["result"]
 
 
 class K8sCodeGenToolNode(ToolNode):
@@ -69,7 +68,8 @@ You are to answer the following question with code:
 Here are some pointers for solving questions:
 1. Think about the steps you need to take to answer the question.
 2. Find out which entities you should query (e.g., pods, services, deployments, etc.)
-3. Use the V1 Apis provided by the 'client' object to query the entities.
+3. Use the V1 Apis provided by the 'client' object to query the entities. Only select the
+   relevant fields you need to answer the question.
 4. Save the results into the 'result' dictionary. Do NOT print them.
 '''
 K8S_CODE_GEN_ERR_EXEC_PROMPT = '''
@@ -100,8 +100,8 @@ def kubernetes_codegen_chain(
     
     def on_tool_error(exception: Exception):
         if isinstance(exception, K8sCodeGenExecutionError):
-            return K8S_CODE_GEN_ERR_EXEC_PROMPT.format(error=exception.exception)
-        return GENERIC_TOOL_CALL_ERROR_TEMPLATE.format(error=exception)
+            return K8S_CODE_GEN_ERR_EXEC_PROMPT.format(error=exception.exception.__repr__())
+        return GENERIC_TOOL_CALL_ERROR_TEMPLATE.format(error=exception.__repr__())
 
     graph = StateGraph(_State)
     graph.add_node("call_llm", call_llm)
@@ -115,6 +115,32 @@ def kubernetes_codegen_chain(
 
 
 if __name__ == "__main__":
+    print(K8sCodeGenExecutor()._run('''
+pods = client.CoreV1Api().list_namespaced_pod('default').items
+
+target_pod_name = 'productcatalogservice-5865bf7d98-lk4sm'
+target_node = None
+print("target_node", target_node)
+found = False
+
+for pod in pods:
+    if pod.metadata.name == target_pod_name:
+        target_node = pod.spec.node_name
+        found = True
+        break
+
+if not found:
+    count = 0
+else:
+    if target_node:
+        count = sum(1 for pod in pods if pod.spec.node_name == target_node)
+    else:
+        count = 0
+
+result = count
+'''))
+    exit(0)
+
     from llm_ran.test.utils import setup_harness, test_graph
     from llm_ran.llm import models
     _TEST_QUERIES = [
@@ -128,15 +154,15 @@ if __name__ == "__main__":
         # in the 'monitoring' namespace, get the pod's node name.
         # ''',
         # Cutoff: anything below this ended up being too complicated for one code gen, results are less consistent
-        # '''
-        # In namespace 'monitoring', list all the pods that are running on same kubernetes node
-        # as pod 'prometheus-monitoring-kube-prometheus-prometheus-0' (including this one). Return as a list.
-        # ''',
+        '''
+        In namespace 'monitoring', list all the pods that are running on same kubernetes node
+        as pod 'prometheus-monitoring-kube-prometheus-prometheus-0' (including this one). Return as a list.
+        ''',
         # '''
         # In namespace 'monitoring', find out the node where pod 'prometheus-monitoring-kube-prometheus-prometheus-0' 
         # is deployed on, then use that find all the pods that are running on the same node. Return the names of the pods.
         # '''
-        "Why is my deployment `productcatalogservice` failing?"
+        # "Why is my deployment `productcatalogservice` failing?"
     ]
-    model = setup_harness(models.QWEN_25_14B)
+    model = setup_harness(models.QWEN_25_32B)
     test_graph(kubernetes_codegen_chain(model), _TEST_QUERIES)

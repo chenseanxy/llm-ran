@@ -49,13 +49,18 @@ def get_service_deployment(service_name: str, namespace: str) -> str:
     service = client.CoreV1Api().read_namespaced_service(service_name, namespace)
     return service.spec.selector["app"] if "app" in service.spec.selector else None
 
+def get_pod_status(pod_name: str, namespace: str) -> str:
+    """Get the status of the given pod in the given namespace"""
+    pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
+    return pod.status
+
 def get_pod_details(pod_name: str, namespace: str) -> dict[str, str]:
     """Get the details of the given pod in the given namespace"""
     pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
     return pod
 
-def get_deployment_replicas(deployment_name: str, namespace: str) -> int:
-    """Get the number of replicas for the given deployment in the given namespace"""
+def get_deployment_desired_replicas(deployment_name: str, namespace: str) -> int:
+    """Get the number of desired replicas for the given deployment in the given namespace"""
     deployment = client.AppsV1Api().read_namespaced_deployment(deployment_name, namespace)
     return deployment.spec.replicas if deployment.spec.replicas else None
 
