@@ -10,9 +10,13 @@ for name, func in direct_impl.__dict__.items():
         globals()[name] = tool(func)
 
 K8S_DIRECT_TOOLS = [
-    tool(func)
-    for name, func in direct_impl.__dict__.items()
-    if callable(func) and name.startswith("get_")
+    # tool(sum),
+    # tool(len),
+    *(
+        tool(func)
+        for name, func in direct_impl.__dict__.items()
+        if callable(func) and name.startswith("get_")
+    ),
 ]
 
 K8S_DIRECT_SYS_PROMPT = '''

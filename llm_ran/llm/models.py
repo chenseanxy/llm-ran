@@ -12,7 +12,9 @@
 # LMSTUDIO_LLAMA_31_8B = "lmstudio:meta-llama-3.1-8b-instruct"
 
 # In-use models for experiments
+LLAMA_33_70B = "llama3.3:70b"
 QWEN_25_32B = "qwen2.5:32b"
 QWEN_25_CODE_32B = "qwen2.5-coder:32b"
+QWQ = "qwq:32b"
 SKY_T1_32B = "medragondot/Sky-T1-32B-Preview"
 MIXTRAL_7B = "mixtral:8x7b"

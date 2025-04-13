@@ -63,7 +63,7 @@ args = parser.parse_args()
 
 trials = args.trials
 prefix = args.prefix
-run_id = args.run_id or datetime.now().strftime("%Y%m%d%H%M%S")
+run_id = args.run_id or datetime.now().strftime("%m%d%H%M%S")
 model_filename = args.model.replace(':', '_').replace('/', '_')
 output_file = f"{args.chain}_{model_filename}_{run_id}_{prefix}.csv"
 

@@ -94,6 +94,7 @@ def run_one_trial(
         "question": q.id,
         "trial": trial_id,
         "run_id": run_id,
+        "level": q.level,
         "evaluate_as": evaluate_as,
         "expected": expected,
         "num_messages": len(result["messages"]),
@@ -143,6 +144,7 @@ def run_one_case(
                     "question": q.id,
                     "trial": trial,
                     "run_id": run_id,
+                    "level": q.level,
                     "evaluate_as": evaluate_as,
                     **context,
                     "error": e.__class__.__name__,
@@ -159,13 +161,15 @@ def run_test_cases(
     context: dict[str, str] | None = None,
     snapshot_path: str | pathlib.Path = DEFAULT_SNAPSHOT_PATH,
     result_logger: logging.Logger = None,
+    progress_logger: logging.Logger = None,
     prefix: str = "",
     run_id: str | None = None,
     manage_scenarios: bool = True,
     select_scenarios: list[str] | None = None,
 ):
     results = []
-    run_id = run_id or datetime.now().strftime("%Y%m%d%H%M%S")
+    run_id = run_id or datetime.now().strftime("%m%d%H%M%S")
+    start_time = time()
     for test_case in test_cases:
         scenario_text = test_case.scenario or 'base'
         if select_scenarios and scenario_text not in select_scenarios:
@@ -174,7 +178,24 @@ def run_test_cases(
         if manage_scenarios:
             _logger.info("Loading scenario: %s", test_case.scenario)
         with Scenario(test_case.scenario, load=manage_scenarios):
-            for q in test_case.questions:
+            for qi, q in enumerate(test_case.questions):
+                if progress_logger:
+                    try:
+                        elapsed_time = time() - start_time
+                        expected_time = elapsed_time / (qi) * len(test_case.questions) if qi > 0 else 0
+                        remaining_time = expected_time - elapsed_time
+                        progress_logger.info(
+                            "Scenario %s Progress: %d/%d, elapsed: %.2fs, total: %.2fs, remaining: %.2fs",
+                            scenario_text,
+                            qi + 1,
+                            len(test_case.questions),
+                            elapsed_time,
+                            expected_time,
+                            remaining_time,
+                        )
+                    except Exception:
+                        pass
+
                 this_path = pathlib.Path(snapshot_path) / scenario_text / q.id
                 if not pathlib.Path(this_path).exists():
                     pathlib.Path(this_path).mkdir(parents=True, exist_ok=True)
