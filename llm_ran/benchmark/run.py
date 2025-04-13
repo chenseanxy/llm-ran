@@ -102,13 +102,14 @@ def run_one_trial(
         "question": q.id,
         "trial": trial_id,
         "run_id": run_id,
+        **(context or {}),
         "level": q.level,
         "evaluate_as": evaluate_as,
         "expected": expected,
         "num_messages": len(result["messages"]),
         "execution_time": execution_time,
         **_sum_message_costs(result["messages"]),
-        **context,
+        "snapshot_path": snapshot_path,
         "result": text_result,
         "error": error.__class__.__name__ if error else None,
     }
@@ -154,7 +155,7 @@ def run_one_case(
                     "run_id": run_id,
                     "level": q.level,
                     "evaluate_as": evaluate_as,
-                    **context,
+                    **(context or {}),
                     "error": e.__class__.__name__,
                 }
                 results.append(this_result)

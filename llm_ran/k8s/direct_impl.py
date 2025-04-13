@@ -31,6 +31,11 @@ def get_pod_node(pod_name: str, namespace: str) -> str:
     pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
     return pod.spec.node_name
 
+def get_pod_resource_requests(pod_name: str, namespace: str) -> dict[str, str]:
+    """Get the resource requests for the given pod in the given namespace"""
+    pod = client.CoreV1Api().read_namespaced_pod(pod_name, namespace)
+    return pod.spec.containers[0].resources.requests if pod.spec.containers else None
+
 def get_deployment_status(deployment_name: str, namespace: str) -> str:
     """Get the status of the given deployment in the given namespace"""
     deployment = client.AppsV1Api().read_namespaced_deployment(deployment_name, namespace)

@@ -73,8 +73,10 @@ log_prefix = args.log_prefix or prefix
 run_id = args.run_id or datetime.now().strftime("%m%d%H%M%S")
 model_filename = args.model.replace(':', '_').replace('/', '_')
 output_file = f"{run_id}_{prefix}_{model_filename}_{args.chain}.csv"
-
-setup_logging(level=logging.INFO, to_file=True, file_prefix=f"{run_id}_{log_prefix}")
+log_file_prefix = f"{run_id}"
+if log_prefix:
+    log_file_prefix = f"{log_prefix}_{run_id}"
+setup_logging(level=logging.INFO, to_file=True, file_prefix=log_file_prefix)
 logger = logging.getLogger("benchmark_base")
 
 results = []

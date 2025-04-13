@@ -11,6 +11,6 @@ patches:
         spec:
           containers:
             - name: server
-              livenessProbe:
+              readinessProbe:
                 grpc:
                   port: 3551
