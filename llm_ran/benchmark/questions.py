@@ -11,6 +11,10 @@ BROKEN_POD = (
         pod
         for pod in impl.get_deployment_pods(TARGET_SERVICE, TARGET_NAMESPACE)
         if impl.get_pod_status(pod, TARGET_NAMESPACE).phase != "Running"
+        or any(
+            not container.state.running
+            for container in impl.get_pod_status(pod, TARGET_NAMESPACE).container_statuses
+        )
     ] or [ None ]
 )[0]
 
@@ -318,7 +322,7 @@ TEST_CASES = [
                 question=(
                     f"Which container in pod `{BROKEN_POD}` is unhealthy?"
                 ),
-                answer=lambda: impl.get_pod_details(BROKEN_POD, TARGET_NAMESPACE)["containers"][0]["name"],
+                answer=lambda: impl.get_pod_details(BROKEN_POD, TARGET_NAMESPACE).containers[0].name,
                 derive_wrong_answers=lambda x: [
                     "nginx",
                     "redis",
@@ -426,8 +430,11 @@ TEST_CASES = [
                 ),
                 answer=lambda: sum(
                     impl.get_pod_status(pod, TARGET_NAMESPACE).phase != "Running"
-                    for pod in
-                    impl.get_deployment_pods(
+                    or any(
+                        not container.state.running
+                        for container in impl.get_pod_status(pod, TARGET_NAMESPACE).container_statuses
+                    )
+                    for pod in impl.get_deployment_pods(
                         TARGET_SERVICE, TARGET_NAMESPACE, 
                     )
                 ),
@@ -440,24 +447,16 @@ TEST_CASES = [
                 question=(
                     f"Which container in pod `{BROKEN_POD}` is unhealthy?"
                 ),
-                answer=lambda: impl.get_pod_details(BROKEN_POD, TARGET_NAMESPACE)["containers"][0]["name"],
+                answer=lambda: [
+                    container.name
+                    for container in impl.get_pod_status(BROKEN_POD, TARGET_NAMESPACE).container_statuses
+                    if not container.state.running
+                ][0],
                 derive_wrong_answers=lambda x: [
                     "nginx",
                     "redis",
                     "mysql",
                 ], 
-                level=0,
-                base_type=1,
-            ),
-            Question(
-                id="which-pod-is-unhealthy",
-                question=(
-                    f"Which pod in deployment `{TARGET_SERVICE}` is unhealthy?"
-                ),
-                answer=lambda: BROKEN_POD,
-                derive_wrong_answers=lambda x: impl.get_deployment_pods(
-                    TARGET_SERVICE, TARGET_NAMESPACE
-                ),
                 level=0,
                 base_type=1,
             ),
@@ -492,16 +491,15 @@ TEST_CASES = [
                 base_type=1,
             ),
             Question(
-                id="why-is-deployment-not-rolling-out",
+                id="why-is-deployment-not-receiving-traffic",
                 question=(
-                    f"Why is deployment `{TARGET_SERVICE}` not rolling out?"
+                    f"Why is deployment `{TARGET_SERVICE}` not receiving traffic?"
                 ),
-                answer=lambda: "Not passing health checks",
+                answer=lambda: "Container is in a crash loop state because it's not passing health checks",
                 derive_wrong_answers=lambda x: [
-                    "Image not found",
-                    "Node tolerations not met",
-                    "Insufficient CPU",
-                    "Insufficient memory",
+                    "Container is not running because its image couldn't be found",
+                    "Container is not scheduled because it doesn't have enough resources",
+                    "Container is not exposed to traffic because it doesn't have a service",
                 ],
                 level=2,
                 base_type=1,
@@ -511,7 +509,7 @@ TEST_CASES = [
                 question=(
                     f"How to fix pod `{BROKEN_POD}` being unhealthy?"
                 ),
-                answer=lambda: "Check readiness probe and health checks",
+                answer=lambda: "Debug health checks and liveness probes",
                 derive_wrong_answers=lambda x: [
                     "Check image name",
                     "Check node tolerations",
@@ -526,7 +524,7 @@ TEST_CASES = [
                 question=(
                     f"How to fix deployment `{TARGET_SERVICE}` failing?"
                 ),
-                answer=lambda: "Check readiness probe and health checks",
+                answer=lambda: "Debug health checks and liveness probes",
                 derive_wrong_answers=lambda x: [
                     "Check image name",
                     "Check node tolerations",

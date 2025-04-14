@@ -58,7 +58,7 @@ Do NOT use try-catch clauses and do NOT handle exceptions.
 Query the cluster and save the results in the 'result' dictionary.
 Execute the code with the tool we have provided.
 If needed, you can write and execute code multiple times to gather
-more information.
+more information. Do NOT delete or modify pods or other resources.
 Then answer the original question based on all the information you 
 have gathered. 
 
