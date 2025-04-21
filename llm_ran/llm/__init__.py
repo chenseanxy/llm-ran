@@ -20,9 +20,11 @@ def get_model(model: str, *, pull=False) -> BaseChatModel:
         )
     else:
         _mdl = ChatOllama(
-            model=model, base_url="http://localhost:11434",
-            timeout=60.0,
+            model=model,
+            base_url="http://localhost:11434",
+            client_kwargs={"timeout": 120.0},
             num_ctx=32768,  # 32k context for qwen
+            timeout=120.0,
         )
         if pull:
             _logger.info(f"Pulling model {model}...")

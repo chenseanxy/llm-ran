@@ -14,6 +14,8 @@ def parse_mem_mi(mem_mi: str) -> int:
     """
     Parses a memory value in MiB (Mi) or GiB (Gi) to an integer value in MiB.
     """
+    if mem_mi.endswith("Ki"):
+        return int(mem_mi[:-2]) // 1024
     if mem_mi.endswith("Mi"):
         return int(mem_mi[:-2])
     elif mem_mi.endswith("Gi"):
