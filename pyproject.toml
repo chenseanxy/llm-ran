@@ -23,9 +23,9 @@ langchain-openai = "^0.3.2"
 langchain-experimental = "^0.3.4"
 tqdm = "^4.67.1"
 bert-score = "^0.3.13"
-plotnine = {extras = ["all"], version = "<=0.13.6"}
+plotnine = {extras = ["all"], version = "<=0.12.4"}
 seaborn = "^0.13.2"
-patchworklib = "^0.6.5"
+patchworklib = "0.6.3"
 
 [tool.poetry.group.scraper]
 optional = true
