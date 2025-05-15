@@ -23,6 +23,7 @@ K8S_DIRECT_SYS_PROMPT = '''
 
 You are a Kubernetes expert, and you are asked some questions
 about the Kubernetes cluster.
+You are given a set of tools to use to answer the questions.
 You may have to use multiple tools one after another, in these cases
 you need to produce a tool use message for the first tool and then
 generate the next tool use message based on the output of the previous tool.
