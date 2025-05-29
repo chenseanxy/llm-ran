@@ -49,6 +49,7 @@ class Question(BaseModel):
             return "mulchoice"
         elif type_ == 2:
             return "open"
+        raise ValueError(f"Unknown question type {type_}")
 
     def can_evaluate_as(self) -> list[int]:
         if self.base_type == 0:
@@ -57,6 +58,7 @@ class Question(BaseModel):
             return [1, 2]
         elif self.base_type == 2:
             return [2]
+        raise ValueError(f"Unknown base type {self.base_type} for question {self.question}")
 
     def question_text(self, evaluate_as: int) -> str:
         # Evaluate as type 0, 1, 2
@@ -86,6 +88,7 @@ class Question(BaseModel):
             return f"Choose the correct answer for this question: {q}\n{answers_template}\nAnswer ONLY with a single letter."
         if evaluate_as == 2:
             return f"{q}\nAnswer with a few words."
+        raise CannotEvaluateAsError(q, t, evaluate_as)
 
     def dump(self) -> dict:
         return {

@@ -1,3 +1,7 @@
+'''
+Runs streamlit frontend
+'''
+
 from llm_ran.logging import setup_logging
 setup_logging()
 

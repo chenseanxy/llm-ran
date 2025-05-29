@@ -15,6 +15,7 @@ _logger = logging.getLogger(__name__)
 
 DEFAULT_OUTPUT_PATH = pathlib.Path(__file__).parent.parent.parent / "data"
 DEFAULT_SNAPSHOT_PATH = DEFAULT_OUTPUT_PATH / "snapshots"
+DEFAULT_SNAPSHOT_PATH.mkdir(parents=True, exist_ok=True)
 
 
 def _sum_message_costs(messages: list[dict]) -> dict[str, int]:

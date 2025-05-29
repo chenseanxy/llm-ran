@@ -1,5 +1,5 @@
-from .base import TestCase, Question
 import llm_ran.k8s.direct_impl as impl
+from .base import TestCase, Question
 from .helpers import parse_cpu_mi, parse_mem_mi
 
 TARGET_SERVICE = "productcatalogservice"

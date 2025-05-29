@@ -1,3 +1,8 @@
+'''
+Implementations of tools for direct agent.
+Also used for generating correct answers when running experiments.
+'''
+
 from kubernetes import client
 
 

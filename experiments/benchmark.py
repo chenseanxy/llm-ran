@@ -1,3 +1,7 @@
+'''
+This script doesn't actually run benchmarks, but just prints the commands to run the benchmarks.
+'''
+
 from llm_ran.llm import models
 from llm_ran.logging import setup_logging
 import logging
