@@ -115,32 +115,6 @@ def kubernetes_codegen_chain(
 
 
 if __name__ == "__main__":
-    print(K8sCodeGenExecutor()._run('''
-pods = client.CoreV1Api().list_namespaced_pod('default').items
-
-target_pod_name = 'productcatalogservice-5865bf7d98-lk4sm'
-target_node = None
-print("target_node", target_node)
-found = False
-
-for pod in pods:
-    if pod.metadata.name == target_pod_name:
-        target_node = pod.spec.node_name
-        found = True
-        break
-
-if not found:
-    count = 0
-else:
-    if target_node:
-        count = sum(1 for pod in pods if pod.spec.node_name == target_node)
-    else:
-        count = 0
-
-result = count
-'''))
-    exit(0)
-
     from llm_ran.test.utils import setup_harness, test_graph
     from llm_ran.llm import models
     _TEST_QUERIES = [

@@ -6,7 +6,7 @@ from time import time
 from langchain_core.messages import AIMessage
 from langgraph.graph.graph import CompiledGraph
 
-from llm_ran.yaml import yaml
+from llm_ran.own_yaml import yaml
 from llm_ran.graph import run_graph
 from llm_ran.k8s_env.scenario import Scenario
 from .base import TestCase, Question
