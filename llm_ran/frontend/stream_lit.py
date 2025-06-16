@@ -153,6 +153,6 @@ def main(graph):
         with st.chat_message("assistant"):
             # create a placeholder container for streaming and any other events to visually render here
             placeholder = st.container()
-            response = asyncio.run(event_handler([HumanMessage(content=prompt)], placeholder))
+            response = asyncio.run(event_handler(st.session_state.messages, placeholder))
             st.session_state.messages.append(AIMessage(response))
             st.session_state.containers.append(placeholder)
