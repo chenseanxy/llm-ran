@@ -102,7 +102,7 @@ async def invoke_our_graph(graph_runnable, st_messages, st_placeholder):
                     )  # Display the input data sent to the tool
                     st.write("Tool output: ")
                     output_placeholder = st.empty()  # Placeholder for tool output that will be updated later below
-                    s.update(label="Completed Calling Tool!", expanded=False)  # Update the status once done
+                    s.update(label=f"Called {event['name']}", expanded=False)  # Update the status once done
 
         elif kind == "on_tool_end":
             # The event signals the completion of a tool's execution
